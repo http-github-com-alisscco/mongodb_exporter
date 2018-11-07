@@ -43,13 +43,13 @@ func defaultMongoDBURL() string {
 
 var (
 	versionF       = flag.Bool("version", false, "Print version information and exit.")
-	listenAddressF = flag.String("web.listen-address", ":9216", "Address to listen on for web interface and telemetry.")
+	listenAddressF = flag.String("web.listen-address", ":9001", "Address to listen on for web interface and telemetry.")
 	metricsPathF   = flag.String("web.metrics-path", "/metrics", "Path under which to expose metrics.")
 
-	collectDatabaseF   = flag.Bool("collect.database", false, "Enable collection of Database metrics")
-	collectCollectionF = flag.Bool("collect.collection", false, "Enable collection of Collection metrics")
-	collectTopF        = flag.Bool("collect.topmetrics", false, "Enable collection of table top metrics")
-	collectIndexUsageF = flag.Bool("collect.indexusage", false, "Enable collection of per index usage stats")
+	collectDatabaseF   = flag.Bool("collect.database", true, "Enable collection of Database metrics")
+	collectCollectionF = flag.Bool("collect.collection", true, "Enable collection of Collection metrics")
+	collectTopF        = flag.Bool("collect.topmetrics", true, "Enable collection of table top metrics")
+	collectIndexUsageF = flag.Bool("collect.indexusage", true, "Enable collection of per index usage stats")
 
 	uriF     = flag.String("mongodb.uri", defaultMongoDBURL(), "MongoDB URI, format: [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]")
 	tlsF     = flag.Bool("mongodb.tls", false, "Enable tls connection with mongo server")
