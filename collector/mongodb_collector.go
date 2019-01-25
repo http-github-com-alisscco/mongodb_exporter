@@ -43,6 +43,7 @@ type MongodbCollectorOpts struct {
 	CollectCollectionMetrics bool
 	CollectTopMetrics        bool
 	CollectIndexUsageStats   bool
+	CollectOperationsMetrics bool
 	SocketTimeout            time.Duration
 	SyncTimeout              time.Duration
 }
@@ -273,6 +274,14 @@ func (exporter *MongodbCollector) collectMongod(session *mgo.Session, ch chan<- 
 		serverStatus.Export(ch)
 	}
 
+	if exporter.Opts.CollectOperationsMetrics {
+		log.Debug("Collecting Operations Metrics From Mongod")
+		operationsStats := mongod.GetOperationsStatus(session)
+		if operationsStats != nil {
+			operationsStats.Export(ch)
+		}
+	}
+
 	if exporter.Opts.CollectDatabaseMetrics {
 		log.Debug("Collecting Database Status From Mongod")
 		dbStatList := mongod.GetDatabaseStatList(session)
@@ -324,3 +333,4 @@ func (exporter *MongodbCollector) collectMongodReplSet(session *mgo.Session, ch 
 
 // check interface
 var _ prometheus.Collector = (*MongodbCollector)(nil)
+

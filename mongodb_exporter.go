@@ -50,6 +50,7 @@ var (
 	collectCollectionF = flag.Bool("collect.collection", true, "Enable collection of Collection metrics")
 	collectTopF        = flag.Bool("collect.topmetrics", true, "Enable collection of table top metrics")
 	collectIndexUsageF = flag.Bool("collect.indexusage", true, "Enable collection of per index usage stats")
+	collectOperationsF = flag.Bool("collect.operations", true, "Enable collection of operations metrics")
 
 	uriF     = flag.String("mongodb.uri", defaultMongoDBURL(), "MongoDB URI, format: [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]")
 	tlsF     = flag.Bool("mongodb.tls", false, "Enable tls connection with mongo server")
@@ -124,6 +125,7 @@ func main() {
 		CollectCollectionMetrics: *collectCollectionF,
 		CollectTopMetrics:        *collectTopF,
 		CollectIndexUsageStats:   *collectIndexUsageF,
+		CollectOperationsMetrics: *collectOperationsF,
 		SocketTimeout:            *socketTimeoutF,
 		SyncTimeout:              *syncTimeoutF,
 	})
@@ -131,3 +133,4 @@ func main() {
 
 	exporter_shared.RunServer("MongoDB", *listenAddressF, *metricsPathF, promhttp.ContinueOnError)
 }
+
