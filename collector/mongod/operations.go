@@ -94,12 +94,12 @@ func GetOperationsStatus(session *mgo.Session) *OperationsStatus {
 	}
 
 	for _, op := range operationsList.Inprog {
-		optime := time.Duration(op.SecsRunning)*time.Second + time.Duration(op.MicroSecsRunning)*time.Microsecond
-
 		// skip replication getmore queries
 		if op.Op == "getmore" && op.Ns=="local.oplog.rs" {
 			continue
 		}
+
+		optime := time.Duration(op.SecsRunning)*time.Second + time.Duration(op.MicroSecsRunning)*time.Microsecond
 
 		if optime > longestQueryDuration {
 			longestQueryDuration = optime
