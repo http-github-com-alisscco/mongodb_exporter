@@ -38,8 +38,8 @@ type Operation struct {
 	SecsRunning      int64  `bson:"secs_running"`
 	MicroSecsRunning int64  `bson:"microsecs_running"`
 	Msg              string `bson:"msg"`
-	Progess struct {
-		Done int32 `bson:"done"`
+	Progess          struct {
+		Done  int32 `bson:"done"`
 		Total int32 `bson:"total"`
 	} `bson:"progress"`
 }
@@ -49,12 +49,12 @@ type OperationsList struct {
 	Inprog []Operation `bson:"inprog"`
 }
 
-// OperationsStatus holds results for metrics 
+// OperationsStatus holds results for metrics
 type OperationsStatus struct {
-	LongestQueryTime time.Duration
-	IndexBuilding    bool
+	LongestQueryTime           time.Duration
+	IndexBuilding              bool
 	IndexBuildingProgressTotal int32
-	IndexBuildingProgressDone int32
+	IndexBuildingProgressDone  int32
 }
 
 // Export exports database stats to prometheus
@@ -87,14 +87,20 @@ func (o *OperationsStatus) Describe(ch chan<- *prometheus.Desc) {
 func GetOperationsStatus(session *mgo.Session) *OperationsStatus {
 	operationsList := &OperationsList{}
 	var longestQueryDuration time.Duration
-	err := session.DB("admin").Run(bson.D{{"currentOp", 1}, {"$all", true}, {"op", bson.M{"$in": []string{"command", "query", "update", "delete", "insert"}}}}, &operationsList)
+	err := session.DB("admin").Run(bson.D{{"currentOp", 1}, {"$all", true}, {"op", bson.M{"$in": []string{"command", "query", "update", "delete", "insert", "getmore"}}}}, &operationsList)
 	if err != nil {
 		log.Error("Failed to get current operations list")
 		return nil
 	}
 
 	for _, op := range operationsList.Inprog {
+		// skip replication getmore queries
+		if op.Op == "getmore" && op.Ns=="local.oplog.rs" {
+			continue
+		}
+
 		optime := time.Duration(op.SecsRunning)*time.Second + time.Duration(op.MicroSecsRunning)*time.Microsecond
+
 		if optime > longestQueryDuration {
 			longestQueryDuration = optime
 		}
@@ -121,4 +127,3 @@ func GetOperationsStatus(session *mgo.Session) *OperationsStatus {
 	result.IndexBuilding = len(operationsList.Inprog) > 0
 	return result
 }
-
