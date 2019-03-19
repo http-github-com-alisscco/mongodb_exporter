@@ -47,9 +47,9 @@ var (
 	metricsPathF   = flag.String("web.metrics-path", "/metrics", "Path under which to expose metrics.")
 
 	collectDatabaseF   = flag.Bool("collect.database", true, "Enable collection of Database metrics")
-	collectCollectionF = flag.Bool("collect.collection", true, "Enable collection of Collection metrics")
+	collectCollectionF = flag.Bool("collect.collection", false, "Enable collection of Collection metrics")
 	collectTopF        = flag.Bool("collect.topmetrics", true, "Enable collection of table top metrics")
-	collectIndexUsageF = flag.Bool("collect.indexusage", true, "Enable collection of per index usage stats")
+	collectIndexUsageF = flag.Bool("collect.indexusage", false, "Enable collection of per index usage stats")
 	collectOperationsF = flag.Bool("collect.operations", true, "Enable collection of operations metrics")
 
 	uriF     = flag.String("mongodb.uri", defaultMongoDBURL(), "MongoDB URI, format: [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]")
@@ -133,4 +133,3 @@ func main() {
 
 	exporter_shared.RunServer("MongoDB", *listenAddressF, *metricsPathF, promhttp.ContinueOnError)
 }
-
