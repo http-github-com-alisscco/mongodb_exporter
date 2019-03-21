@@ -228,6 +228,8 @@ func (exporter *MongodbCollector) scrape(ch chan<- prometheus.Metric) {
 		exporter.collectMongod(mongoSess, ch)
 	case nodeType == "replset":
 		exporter.collectMongodReplSet(mongoSess, ch)
+	case nodeType == "arbiter":
+		exporter.collectMongodReplSetArbiter(mongoSess, ch)
 	default:
 		err = fmt.Errorf("Unrecognized node type %s", nodeType)
 		log.Error(err)
@@ -331,6 +333,14 @@ func (exporter *MongodbCollector) collectMongodReplSet(session *mgo.Session, ch 
 	}
 }
 
+func (exporter *MongodbCollector) collectMongodReplSetArbiter(session *mgo.Session, ch chan<- prometheus.Metric) {
+
+	log.Debug("Collecting Replset Status for Arbiter")
+	replSetStatus := mongod.GetReplSetStatus(session)
+	if replSetStatus != nil {
+		replSetStatus.Export(ch)
+	}
+}
+
 // check interface
 var _ prometheus.Collector = (*MongodbCollector)(nil)
-

@@ -171,14 +171,19 @@ func MongoSessionServerVersion(session *mgo.Session) (string, error) {
 
 func MongoSessionNodeType(session *mgo.Session) (string, error) {
 	masterDoc := struct {
-		SetName interface{} `bson:"setName"`
-		Hosts   interface{} `bson:"hosts"`
-		Msg     string      `bson:"msg"`
+		SetName     interface{} `bson:"setName"`
+		Hosts       interface{} `bson:"hosts"`
+		Msg         string      `bson:"msg"`
+		ArbiterOnly bool        `bson:"arbiterOnly"`
 	}{}
 	err := session.Run("isMaster", &masterDoc)
 	if err != nil {
 		log.Errorf("Got unknown node type: %s", err)
 		return "unknown", err
+	}
+
+	if masterDoc.ArbiterOnly {
+		return "arbiter", nil
 	}
 
 	if masterDoc.SetName != nil || masterDoc.Hosts != nil {
