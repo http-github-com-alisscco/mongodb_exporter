@@ -48,8 +48,8 @@ func (d *operationsCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 
 	doc := bson.M{"operations": bson.M{
-		"longest_running_query": statuses.LongestQueryTime.Milliseconds(),
-		"index_building":        statuses.IndexBuilding,
+		"longest_running_query_seconds": float64(statuses.LongestQueryTime) / float64(time.Second),
+		"index_building":                statuses.IndexBuilding,
 		"index_building_progress": bson.M{
 			"done":  statuses.IndexBuildingProgressDone,
 			"total": statuses.IndexBuildingProgressTotal,
