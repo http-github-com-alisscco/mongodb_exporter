@@ -100,13 +100,13 @@ func getOperationsStatus(ctx context.Context, client *mongo.Client, log *logrus.
 
 	singleResult := client.Database("admin").RunCommand(ctx, oplistQuery)
 	if singleResult.Err() != nil {
-		log.Errorf("failed to get current operations list: %w", singleResult.Err())
+		log.Errorf("failed to get current operations list: %s", singleResult.Err())
 		return nil
 	}
 
 	err := singleResult.Decode(&operationsList)
 	if err != nil {
-		log.Errorf("failed to decode current operations list: %w", err)
+		log.Errorf("failed to decode current operations list: %s", err)
 	}
 
 	log.Debugf("ops running:")
@@ -128,13 +128,13 @@ func getOperationsStatus(ctx context.Context, client *mongo.Client, log *logrus.
 
 	singleResult = client.Database("admin").RunCommand(ctx, finalQuery)
 	if singleResult.Err() != nil {
-		log.Errorf("failed to get current operations list for index build check: %w", singleResult.Err())
+		log.Errorf("failed to get current operations list for index build check: %s", singleResult.Err())
 		return nil
 	}
 
 	err = singleResult.Decode(operationsList)
 	if err != nil {
-		log.Errorf("failed to decode index build operations list: %w", err)
+		log.Errorf("failed to decode index build operations list: %s", err)
 		return nil
 	}
 
